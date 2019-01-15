@@ -181,6 +181,9 @@ fi = (function() {
       return fi.sortBy(functions, function(r){return r});
     },
 
+    giveMeMore: function(){
+      return true;
+    },
 
   }
 })()
