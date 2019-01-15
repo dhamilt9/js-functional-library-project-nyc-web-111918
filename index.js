@@ -94,7 +94,11 @@ fi = (function() {
           resultsArray[i]=([collection[i], cb(collection[i])])
         }
         resultsArray.sort(function(a, b){
-          return a[1]-b[1]
+          if (typeof(a[1])==='string'){
+            return a[1].localeCompare(b[1])
+          }else{
+            return a[1]-b[1]
+          }
         })
         for(let key in resultsArray){
           returnArray.push(resultsArray[key][0])
@@ -132,40 +136,49 @@ fi = (function() {
       return returnArray;
     },
 
-    uniq: function(array, issorted=false, callback=false){
-      console.log(callback);
+    uniq: function(array, issorted=false, callback=function(num){return num}){
+      console.log(issorted);
       returnArray=[];
-      if (!issorted && callback==false){
-        for (i=0; i<array.length; i++){
-          inArray=false;
-          for (j=0; j<returnArray.length; j++){
-            if (returnArray[j]===array[i]){
-              inArray=true;
-            }
-          }
-          if (!inArray){
-            returnArray.push(array[i]);
+      arrayResults=[];
+      for (i=0; i<array.length; i++){
+        inArray=false;
+        for (j=0; j<arrayResults.length; j++){
+          if (callback(array[i])===arrayResults[j]){
+            inArray=true;
           }
         }
-      }else if(issorted && callback==false){
-        for (i=0; i<array.length; i++){
-          inArray=false;
-          for (j=i; j<returnArray.length; j++){
-            if (returnArray[j]===array[i]){
-              inArray=true;
-            }
-          }
-          if (!inArray){
-            returnArray.push(array[i]);
-          }
+        if (!inArray){
+          returnArray.push(array[i]);
+          arrayResults.push(callback(array[i]))
         }
       }
-      console.log(returnArray);
       return returnArray;
     },
 
-    functions: function() {
+    keys: function(object){
+      let keys=[]
+      for (let key in object){
+        keys.push(key)
+      }
+      return keys
+    },
 
+    values: function(object){
+      let values=[]
+      for (let key in object){
+        values.push(object[key]);
+      }
+      return values;
+    },
+
+    functions: function(object) {
+      let functions=[]
+      for (let key in object){
+        if (typeof(object[key])==="function"){
+          functions.push(key);
+        }
+      }
+      return fi.sortBy(functions, function(r){return r});
     },
 
 
